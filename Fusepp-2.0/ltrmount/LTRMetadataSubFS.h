@@ -1,6 +1,7 @@
 #pragma once
 #include "ISubFileSystem.h"
 #include <set>
+#include "VolumeSubFS.h"
 
 class LTRMetadataSubFS : public ISubFileSystem
 {
@@ -14,6 +15,7 @@ public:
 
 private:
 	bool simple_vmdk;
+	VolumeSubFS dummyVolumeSubFS;
 	std::string mountPoint;
 	std::string fuse_path;
 
@@ -54,6 +56,7 @@ private:
 		}
 
 	};
+	ISubFileSystem createVolumeSubFS(const char *path);
 
 	vpgData readVpgXml(const std::string& path);
 

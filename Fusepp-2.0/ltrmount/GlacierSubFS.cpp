@@ -67,4 +67,3 @@ size_t GlacierSubFS::read(const char *path, char *buf, size_t size, size_t offse
 bool GlacierSubFS::shouldDelegate(const char *path) {
 	return (std::string(path).rfind("/" + fuse_path, 0) == 0);
 }
-

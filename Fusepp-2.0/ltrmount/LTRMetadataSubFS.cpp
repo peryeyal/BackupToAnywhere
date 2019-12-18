@@ -21,30 +21,46 @@
 
 namespace fs = boost::filesystem;
 
-LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point, std::string fuse_path) : simple_vmdk(use_simple_vmdk), mountPoint(mount_point), fuse_path(fuse_path)
+LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point, std::string fuse_path) : 
+	simple_vmdk(use_simple_vmdk), mountPoint(mount_point), fuse_path(fuse_path), dummyVolumeSubFS(use_simple_vmdk, mount_point, "dummy volume", 0, "dummy dom", "dummy datapool")
 {
+}
+
+ISubFileSystem LTRMetadataSubFS::createVolumeSubFS(const char *path) {
+	size_t size_in_bytes = 0;
+	VolumeSubFS singleVolume(simple_vmdk, mountPoint, "put volume name here", size_in_bytes, "put dom path in repository here", "put datapool path in repository here");
+	return singleVolume;
 }
 
 std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
 
 	size_t file_size = 0;
-	// delegate to Volume if it contains .vmdk
+	if (dummyVolumeSubFS.shouldDelegate(path)) {
+		return createVolumeSubFS(path).getattr(path);
+	}
 	return std::make_tuple(FileType::Directory, file_size);
 }
 
 size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
+	if (dummyVolumeSubFS.shouldDelegate(path)) {
+		return createVolumeSubFS(path).read(path, buf, size, offset);
+	}
 	return 0;
 }
 
 std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
+	if (dummyVolumeSubFS.shouldDelegate(path)) {
+		return createVolumeSubFS(path).readdir(path);
+	}
+
 	std::vector<std::string> result;
 	std::vector<std::string> substrRes;
 
 	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
 	
-	if (substrRes.size() == 2)
+	if (substrRes.size() == 2) //[general|glacier]
 		readHighLevelDir(result);
-	else if (substrRes.size() == 3)
+	else if (substrRes.size() == 3) //[general|glacier]/<time>
 		readDatesDir(result, substrRes[2]);
 
 	return result;
