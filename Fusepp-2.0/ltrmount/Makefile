@@ -3,7 +3,7 @@ OBJDIR=.obj
 CC=g++
 
 CFLAGS = -Wall --std=c++0x `pkg-config fuse --cflags` -I.. 
-LDFLAGS = `pkg-config fuse --libs`
+LDFLAGS = `pkg-config fuse --libs` -L/usr/lib/x86_64-linux-gnu -lboost_filesystem -lboost_system
 
 $(shell mkdir -p $(OBJDIR)) 
 
