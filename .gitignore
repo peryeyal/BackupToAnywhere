@@ -6,10 +6,9 @@
 *.lo
 *.o
 *.obj
-LTRepository/.vs/
-LTRepository/Debug/
-LTRepository/LTRepository.sln.DotSettings.user
-LTRepository/LTRepository.vcxproj.user
+Fusepp-2.0/ltrmount/.vs/
+Fusepp-2.0/ltrmount/Debug/
+Fusepp-2.0/ltrmount/*.user
 
 Fusepp-2.0/ltrmount/LTRMount
 # Precompiled Headers
