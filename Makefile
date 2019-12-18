@@ -1,6 +1,6 @@
 SMBREPODIR=/mnt/smb_qa_longrun
 NFSREPODIR=/mnt/nfs_qa_longrun
-LTRFACADE=LtrFacade
+LTRFACADE=LtrFacade2
 FACADEBIN=Fusepp-2.0/ltrmount
 
 

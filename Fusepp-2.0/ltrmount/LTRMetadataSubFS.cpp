@@ -2,6 +2,7 @@
 
 #include <boost/filesystem.hpp>
 #include <set>
+#include "pugixml.hpp"
 
 namespace fs = boost::filesystem;
 

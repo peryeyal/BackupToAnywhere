@@ -7,7 +7,7 @@ LDFLAGS = `pkg-config fuse --libs` -L/usr/lib/x86_64-linux-gnu -lboost_filesyste
 
 $(shell mkdir -p $(OBJDIR)) 
 
-OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o $(OBJDIR)/LTRRepositoryWrapper.o $(OBJDIR)/pugixml.o
+OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o $(OBJDIR)/LTRRepositoryWrapper.o $(OBJDIR)/pugixml.o $(OBJDIR)/GlacierSubFS.o $(OBJDIR)/LTRMetadataSubFS.o
 
 all: $(PROG)
 
