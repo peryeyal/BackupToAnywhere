@@ -4,6 +4,12 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#define SEPARATOR "\\"
+#else
+#define SEPARATOR "/"
+#endif
+
 enum FileType
 {
 	RegularFile = 0,

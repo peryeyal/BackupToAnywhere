@@ -1,6 +1,8 @@
 #include "LTRMetadataSubFS.h"
 
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp> 
+#include <algorithm>
 #include <set>
 #include "pugixml.hpp"
 
@@ -26,12 +28,8 @@ LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point
 std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
 
 	size_t file_size = 0;
-
-	if (std::string("/") + fuse_path == path) {
-		return std::make_tuple(FileType::Directory, file_size);
-	}
-
-	return std::make_tuple(FileType::RegularFile, 0);
+	// delegate to Volume if it contains .vmdk
+	return std::make_tuple(FileType::Directory, file_size);
 }
 
 size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
@@ -40,20 +38,45 @@ size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t o
 
 std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 	std::vector<std::string> result;
-	onGeneralView(result);
+	std::vector<std::string> substrRes;
+
+	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
+	
+	if (substrRes.size() == 2)
+		readHighLevelDir(result);
+	else if (substrRes.size() == 3)
+		readDatesDir(result, substrRes[2]);
+
 	return result;
 }
 
 bool LTRMetadataSubFS::shouldDelegate(const char *path) {
-	return (std::string(path).rfind("/" + fuse_path, 0) == 0);
+	auto res = (std::string(path).rfind(std::string("" + (char)(boost::filesystem::path::separator)) + fuse_path, 0));
+	return (std::string(path).rfind(std::string(SEPARATOR) + fuse_path, 0) == 0);
 }
 
-void LTRMetadataSubFS::onGeneralView(std::vector<std::string>& result)
+void LTRMetadataSubFS::readDatesDir(std::vector<std::string>& result, const std::string& timestamp)
 {
-	fs::path dirPath(mountPoint + "backups");
+	auto set_result = readVpgMetada();
+
+	if (auto find_res = std::find_if(set_result.cbegin(), set_result.cend(),
+		[timestamp](vpgData data) {
+		return data.timestamp == timestamp;
+	}) != set_result.cend())
+	{
+		//find_res;
+		//result.push_back(find_res.vpgName);
+	}
+	
+}
+
+std::set<LTRMetadataSubFS::vpgData> LTRMetadataSubFS::readVpgMetada()
+{
+	auto path_str = mountPoint + "backups";
+	fs::path dirPath(path_str);
 	fs::recursive_directory_iterator it(dirPath);
 	fs::recursive_directory_iterator end_it;
-	std::set<std::string> set_result;
+	std::set<LTRMetadataSubFS::vpgData> set_result;
 
 	while (it != end_it)
 	{
@@ -63,16 +86,24 @@ void LTRMetadataSubFS::onGeneralView(std::vector<std::string>& result)
 
 			if (outFile.timestamp.size() > 4)
 				outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
+			outFile.timestamp.replace(13, 1, "_");
 			outFile.timestamp.replace(10, 1, "__");
-			set_result.emplace(std::move(outFile.timestamp));
+			set_result.emplace(std::move(outFile));
 		}
 
 		++it;
 	}
 
+	return set_result;
+}
+
+void LTRMetadataSubFS::readHighLevelDir(std::vector<std::string>& result)
+{
+	auto set_result = readVpgMetada();
+
 	for (auto& str : set_result)
 	{
-		result.push_back(std::move(str));
+		result.push_back(std::move(str.timestamp));
 	}
 	std::sort(result.begin(), result.end());
 }
