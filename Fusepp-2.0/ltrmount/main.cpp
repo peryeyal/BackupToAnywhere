@@ -2,7 +2,7 @@
 
 int main()
 {
-	LTRRepositoryWrapper Wrapper;
+	LTRRepositoryWrapper Wrapper(std::string("E:\\"));
 	Wrapper.readdir("/");
 
 	return 0;
