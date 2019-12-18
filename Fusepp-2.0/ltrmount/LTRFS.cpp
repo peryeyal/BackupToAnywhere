@@ -7,12 +7,12 @@
 
 // include in one .cpp file
 #include "Fuse-impl.h"
-#include "LTRRepositoryWrapper.h"
+#include "RootSubFS.h"
 
 //static const char *ltr_path = "/ltr";
 
 
-static LTRRepositoryWrapper rootSubFS("/mnt/smb_qa_longrun/");
+static RootSubFS rootSubFS("/mnt/smb_qa_longrun/");
 
 int LTRFS::getattr(const char *path, struct stat *stbuf)
 {
