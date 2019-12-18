@@ -46,6 +46,8 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 		readHighLevelDir(result);
 	else if (substrRes.size() == 3)
 		readDatesDir(result, substrRes[2]);
+	else if (substrRes.size() == 4)
+		readVpgDir(result, substrRes[3]);
 
 	return result;
 }
@@ -66,34 +68,44 @@ void LTRMetadataSubFS::readDatesDir(std::vector<std::string>& result, const std:
 	{
 		result.push_back(it->vpgName);
 	}
-	
+}
+
+void LTRMetadataSubFS::readVpgDir(std::vector<std::string>& result, const std::string& vpgName)
+{
+	auto set_result = readVpgMetada();
+	auto it = std::find_if(set_result.begin(), set_result.end(),
+		[vpgName](vpgData data) {
+		return data.vpgName == vpgName;
+	});
+
+	if (it != set_result.end())
+	{
+		for (const auto& vmIt: it->vmNames)
+			result.push_back(vmIt);
+	}
 }
 
 const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 {
 	auto path_str = mountPoint + "backups";
 	fs::path dirPath(path_str);
-	fs::recursive_directory_iterator it(dirPath);
-	fs::recursive_directory_iterator end_it;
+	//fs::directory_iterator it(dirPath);
+	//fs::directory_iterator end_it;
 	static std::set<LTRMetadataSubFS::vpgData> set_result;
 
 	if (set_result.empty())
 	{
-		while (it != end_it)
-		{
-			if (it->path().extension() == ".vpc")
+		for (fs::directory_iterator it(dirPath); it != fs::directory_iterator(); ++it)
+			if (fs::is_directory(it->path()))
 			{
 				auto outFile = readVpgXml(it->path().string());
-
+					
 				if (outFile.timestamp.size() > 4)
 					outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
-				outFile.timestamp.replace(13, 1, "_");
+					outFile.timestamp.replace(13, 1, "_");
 				outFile.timestamp.replace(10, 1, "__");
 				set_result.emplace(std::move(outFile));
 			}
-
-			++it;
-		}
 	}
 
 	return set_result;
@@ -112,18 +124,34 @@ void LTRMetadataSubFS::readHighLevelDir(std::vector<std::string>& result)
 
 LTRMetadataSubFS::vpgData LTRMetadataSubFS::readVpgXml(const std::string& path)
 {
-	pugi::xml_document doc;
-
-	pugi::xml_parse_result loadResult = doc.load_file(path.c_str());
-
 	vpgData data;
-
-	if (loadResult)
+	fs::path vpgDir = path;
+	for (fs::directory_iterator file_it = fs::directory_iterator(vpgDir); file_it != fs::directory_iterator(); ++file_it)
 	{
-		auto root = doc.child("BackupSetMetadataDto");
-		data.timestamp = root.child("CheckpointTime").child_value();
-		data.vpgName = root.child("VpgName").child_value();
-		data.backupSetId = root.child("BackupSetId").first_child().child_value();
+		if (file_it->path().extension() == ".vpc")
+		{
+			pugi::xml_document doc;
+			pugi::xml_parse_result loadResult = doc.load_file(file_it->path().string().c_str());
+
+			if (loadResult)
+			{
+				auto root = doc.child("BackupSetMetadataDto");
+				data.timestamp = root.child("CheckpointTime").child_value();
+				data.vpgName = root.child("VpgName").child_value();
+				data.backupSetId = root.child("BackupSetId").first_child().child_value();
+			}
+		}
+
+		if (file_it->path().extension() == ".vmc")
+		{
+			pugi::xml_document doc;
+			pugi::xml_parse_result loadResult = doc.load_file(file_it->path().string().c_str());
+
+			if (loadResult)
+			{
+				data.vmNames.push_back(doc.child("VmImageMetadataDto").child("VmName").child_value());
+			}
+		}
 	}
 
 	return data;

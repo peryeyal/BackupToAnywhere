@@ -4,7 +4,6 @@
 int main()
 {
 	RootSubFS Wrapper(std::string("C:\\temp\\"));
-	Wrapper.readdir("\\general\\2019-09-18__02_06");
-	Wrapper.readdir("\\general\\2019-12-12__01_01");
+	Wrapper.readdir("\\general\\2019-12-15__01_00\\VPG - 500GB - 1 volume - StoreOnceSMBv2 03:00");
 	return 0;
 }

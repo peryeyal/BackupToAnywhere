@@ -1,6 +1,7 @@
 #pragma once
 #include "ISubFileSystem.h"
 #include <set>
+#include <list>
 
 class LTRMetadataSubFS : public ISubFileSystem
 {
@@ -22,6 +23,7 @@ private:
 		std::string timestamp;
 		std::string vpgName;
 		std::string backupSetId;
+		std::list<std::string> vmNames;
 
 		bool operator<(const vpgData& data) const
 		{
@@ -29,6 +31,7 @@ private:
 			if (timestamp > data.timestamp) return false;
 			if (vpgName < data.vpgName) return true;
 			if (vpgName > data.vpgName) return false;
+			
 			return false;
 		}
 
@@ -58,6 +61,7 @@ private:
 
 	void readHighLevelDir(std::vector<std::string>& result);
 	void readDatesDir(std::vector<std::string>& result, const std::string& timestamp);
+	void readVpgDir(std::vector<std::string>& result, const std::string& vpgName);
 
 	const std::set<vpgData>& readVpgMetada();
 };
