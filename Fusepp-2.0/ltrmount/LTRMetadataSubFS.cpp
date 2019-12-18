@@ -17,6 +17,9 @@ std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
 	return std::make_tuple(FileType::Directory, file_size);
 }
 
+size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
+	return 0;
+}
 
 std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 	std::vector<std::string> result;
