@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GlacierSubFS.cpp" />
-    <ClCompile Include="glacier_upload_script.cpp" />
     <ClCompile Include="LTRMetadataSubFS.cpp" />
     <ClCompile Include="RootSubFS.cpp" />
     <ClCompile Include="main.cpp" />
@@ -28,7 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlacierSubFS.h" />
-    <ClInclude Include="glacier_upload_script.h" />
     <ClInclude Include="ISubFileSystem.h" />
     <ClInclude Include="LTRMetadataSubFS.h" />
     <ClInclude Include="RootSubFS.h" />
