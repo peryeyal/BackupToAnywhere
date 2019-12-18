@@ -4,6 +4,20 @@
 #include <iostream>
 #include <memory>
 #include <string.h>
+#include <boost/filesystem.hpp>
+using fs = boost::filesystem;
+
+/*
+	backups/
+			general_view
+					/timestamp1 YYYY_MM_DD__hh_mm
+						/VpgName
+						/timestamp2
+					-/Vpg
+					-   /vpgname
+					-   /vpgbane2
+			/glacier
+*/
 
 static const char *ltr_str = "Hello World!\n";
 static const char *general_path = "general";
@@ -12,6 +26,12 @@ static const char *glacier_path = "glacier";
 static const char *glacier_fileblock1 = "00001.vmdk";
 static const char *glacier_fileblock2 = "00002.vmdk";
 static const char *glacier_fileblock3 = "00003.vmdk";
+
+namespace
+{
+	std::string basePath = "E:\\";
+	 
+}
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
@@ -49,8 +69,25 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 		result.emplace_back(glacier_fileblock2);
 		result.emplace_back(glacier_fileblock3);
 	}
-
 	return result;
+}
+
+LTRRepositoryWrapper::vpgData LTRRepositoryWrapper::readVpgXml(const std::string& path)
+{
+	pugi::xml_document doc;
+
+	pugi::xml_parse_result loadResult = doc.load_file(path.c_str());
+
+	vpgData data;
+
+	if (loadResult)
+	{
+		auto root = doc.child("BackupSetMetadataDto");
+		data.timestamp = root.child("CheckpointTime").child_value();
+		data.vpgName = root.child("VpgName").child_value();
+	}
+
+	return data;
 }
 
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
@@ -71,3 +108,20 @@ size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size
 	return -1;
 }
 
+void LTRRepositoryWrapper::onGeneralView(std::vector<std::string>& result)
+{
+	fs::path dirPath(basePath + "/backups");
+	fs::recursive_directory_iterator it(dirPath);
+	fs::recursive_directory_iterator end_it;
+
+	while (it != end_it)
+	{
+		if (fs::is_regular_file(*it) && it->path().extension() == "vpc")
+		{
+			auto outFile = readVpgXml(it->path().string());
+			result.push_back(outFile.timestamp);
+		}
+
+		++it;
+	}
+}
