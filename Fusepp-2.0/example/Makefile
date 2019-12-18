@@ -25,12 +25,3 @@ $(OBJDIR)/%.o: %.cpp
 
 clean:
 	rm -rf $(PROG) $(OBJDIR)
-	
-mount:
-	mkdir /mnt/nfs_qa_longrun
-	mount -t nfs 10.20.16.31:/nas/SO-NFS /mnt/nfs_qa_longrun -o ro
-	
-unmount:
-	umount /mnt/nfs_qa_longrun
-	rm /mnt/nfs_qa_longrun
-
