@@ -19,7 +19,7 @@
 
 namespace fs = boost::filesystem;
 
-LTRMetadataSubFS::LTRMetadataSubFS(std::string mount_point, std::string fuse_path) : mountPoint(mount_point), fuse_path(fuse_path)
+LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point, std::string fuse_path) : simple_vmdk(use_simple_vmdk), mountPoint(mount_point), fuse_path(fuse_path)
 {
 }
 
