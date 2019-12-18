@@ -34,6 +34,7 @@ namespace
 	std::string basePath = "E:\\";
 }
 
+LTRRepositoryWrapper::LTRRepositoryWrapper(std::string mount) : generalSubFS(mount) {}
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 

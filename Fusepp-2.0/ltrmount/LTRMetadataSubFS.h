@@ -4,6 +4,9 @@
 class LTRMetadataSubFS : public ISubFileSystem
 {
 public:
-	LTRMetadataSubFS();
+	LTRMetadataSubFS(std::string mountPoint);
+
+private:
+	std::string mountPoint;
 };
 

@@ -2,7 +2,7 @@
 
 
 
-LTRMetadataSubFS::LTRMetadataSubFS()
+LTRMetadataSubFS::LTRMetadataSubFS(std::string mountPoint) : mountPoint(mountPoint)
 {
 }
 
