@@ -4,17 +4,34 @@
 #include <set>
 #include "pugixml.hpp"
 
+
+/*
+	backups/
+			general_view
+					/timestamp1 YYYY_MM_DD__hh_mm
+						/VpgName
+						/timestamp2
+					-/Vpg
+					-   /vpgname
+					-   /vpgbane2
+			/glacier
+*/
+
 namespace fs = boost::filesystem;
 
-
-LTRMetadataSubFS::LTRMetadataSubFS(std::string mountPoint) : mountPoint(mountPoint)
+LTRMetadataSubFS::LTRMetadataSubFS(std::string mount_point, std::string fuse_path) : mountPoint(mount_point), fuse_path(fuse_path)
 {
 }
 
 std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
 
 	size_t file_size = 0;
-	return std::make_tuple(FileType::Directory, file_size);
+
+	if (std::string("/") + fuse_path == path) {
+		return std::make_tuple(FileType::Directory, file_size);
+	}
+
+	return std::make_tuple(FileType::RegularFile, 0);
 }
 
 size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
@@ -28,7 +45,7 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 }
 
 bool LTRMetadataSubFS::shouldDelegate(const char *path) {
-	return (std::string(path).rfind("/general", 0) == 0);
+	return (std::string(path).rfind("/" + fuse_path, 0) == 0);
 }
 
 void LTRMetadataSubFS::onGeneralView(std::vector<std::string>& result)

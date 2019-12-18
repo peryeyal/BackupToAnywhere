@@ -4,7 +4,7 @@
 class LTRMetadataSubFS : public ISubFileSystem
 {
 public:
-	LTRMetadataSubFS(std::string mountPoint);
+	LTRMetadataSubFS(std::string mount_point, std::string fuse_path);
 	std::vector<std::string> readdir(const char *path);
 	std::tuple<FileType, size_t> getattr(const char *);
 	size_t read(const char *path, char *buf, size_t size, size_t offset);
@@ -13,6 +13,7 @@ public:
 
 private:
 	std::string mountPoint;
+	std::string fuse_path;
 
 
 	struct vpgData
