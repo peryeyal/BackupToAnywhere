@@ -32,7 +32,7 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
 
-	if (strcmp(path, ltr_path) != 0)
+	if (strcmp(path + 1, ltr_path) != 0)
 		return -1;
 
 	size_t len = strlen(ltr_str);
