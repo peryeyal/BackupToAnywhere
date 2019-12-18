@@ -1,5 +1,6 @@
 #include "LTRRepositoryWrapper.h"
 #include <iostream>
+#include <string.h>
 
 static const char *general_path = "general";
 static const char *glacier_path = "glacier";
