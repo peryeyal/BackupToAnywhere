@@ -51,7 +51,6 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 }
 
 bool LTRMetadataSubFS::shouldDelegate(const char *path) {
-	auto res = (std::string(path).rfind(std::string("" + (char)(boost::filesystem::path::separator)) + fuse_path, 0));
 	return (std::string(path).rfind(std::string(SEPARATOR) + fuse_path, 0) == 0);
 }
 
