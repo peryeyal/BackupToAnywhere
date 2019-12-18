@@ -21,19 +21,23 @@
   <ItemGroup>
     <ClCompile Include="GlacierSubFS.cpp" />
     <ClCompile Include="glacier_upload_script.cpp" />
+    <ClCompile Include="LtrRandomAccessReader.cpp" />
     <ClCompile Include="LTRMetadataSubFS.cpp" />
     <ClCompile Include="RootSubFS.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pugixml.cpp" />
+    <ClCompile Include="VolumeSubFS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlacierSubFS.h" />
     <ClInclude Include="glacier_upload_script.h" />
     <ClInclude Include="ISubFileSystem.h" />
+    <ClInclude Include="LtrRandomAccessReader.h" />
     <ClInclude Include="LTRMetadataSubFS.h" />
     <ClInclude Include="RootSubFS.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="VolumeSubFS.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
