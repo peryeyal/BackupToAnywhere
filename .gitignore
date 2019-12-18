@@ -11,6 +11,7 @@ LTRepository/Debug/
 LTRepository/LTRepository.sln.DotSettings.user
 LTRepository/LTRepository.vcxproj.user
 
+Fusepp-2.0/ltrmount/LTRMount
 # Precompiled Headers
 *.gch
 *.pch
