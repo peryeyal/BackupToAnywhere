@@ -1,4 +1,5 @@
 #include "RootSubFS.h"
+#include <string.h>
 #include <iostream>
 
 static const char *general_path = "general";
