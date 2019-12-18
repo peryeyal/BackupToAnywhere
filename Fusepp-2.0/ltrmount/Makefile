@@ -2,17 +2,20 @@ PROG=LTRMount
 OBJDIR=.obj
 CC=g++
 
-CFLAGS = -Wall --std=c++0x `pkg-config fuse --cflags` -I..
+CFLAGS = -Wall --std=c++0x `pkg-config fuse --cflags` -I.. 
 LDFLAGS = `pkg-config fuse --libs`
 
 $(shell mkdir -p $(OBJDIR)) 
 
-OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o
+OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o $(OBJDIR)/LTRRepositoryWrapper.o
+
+all: $(PROG)
 
 $(PROG) : $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) -o $(PROG)
 
 -include $(OBJS:.o=.d)
+
 
 $(OBJDIR)/%.o: %.cpp
 	$(CC) -c $(CFLAGS) $*.cpp -o $(OBJDIR)/$*.o

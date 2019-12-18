@@ -1,19 +1,20 @@
 #include "LTRRepositoryWrapper.h"
 
 #include <memory>
+#include <string.h>
 
 static const char *ltr_str = "Hello World!\n";
-static const char *ltr_path = "/ltr";
+static const char *ltr_path = "ltr";
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
 	size_t file_size = 0;
 	if (std::string("/") == path) {
-		return std::make_tuple(FileType::Dirrectory, file_size);
+		return std::make_tuple(FileType::Directory, file_size);
 	}
 
 	file_size = strlen(ltr_str);
-	return std::make_tuple(FileType::Dirrectory, file_size);
+	return std::make_tuple(FileType::RegularFile, file_size);
 }
 
 std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
