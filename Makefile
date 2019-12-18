@@ -1,5 +1,24 @@
 SMBREPODIR=/mnt/smb_qa_longrun
 NFSREPODIR=/mnt/nfs_qa_longrun
+LTRFACADE=LtrFacade
+FACADEBIN=Fusepp-2.0/ltrmount
+
+
+build:
+	${MAKE} -C $(FACADEBIN)
+
+clean:
+	${MAKE} -C $(FACADEBIN) clean
+
+facade: build
+	mkdir $(LTRFACADE)	
+	$(FACADEBIN)/LTRMount $(LTRFACADE)
+	ls -al $(LTRFACADE)
+
+unfacade:
+	pkill LTRMount
+	sleep 2
+	rmdir $(LTRFACADE)	
 
 mount-smb:
 	mkdir $(SMBREPODIR)
