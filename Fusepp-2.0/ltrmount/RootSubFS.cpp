@@ -26,7 +26,7 @@ std::tuple<FileType, size_t> RootSubFS::getattr(const char *path) {
 std::vector<std::string> RootSubFS::readdir(const char *path) {
 	std::vector<std::string> result;
 
-	if (strcmp(path, "/") == 0) 
+	if (strcmp(path, SEPARATOR) == 0)
 	{
 		result.emplace_back(".");
 		result.emplace_back("..");

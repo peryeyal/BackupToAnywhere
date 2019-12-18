@@ -1,5 +1,6 @@
 #pragma once
 #include "ISubFileSystem.h"
+#include <set>
 
 class LTRMetadataSubFS : public ISubFileSystem
 {
@@ -21,10 +22,43 @@ private:
 		std::string timestamp;
 		std::string vpgName;
 		std::string backupSetId;
+
+		bool operator<(const vpgData& data) const
+		{
+			if (timestamp < data.timestamp) return true;
+			if (timestamp > data.timestamp) return false;
+			if (vpgName < data.vpgName) return true;
+			if (vpgName > data.vpgName) return false;
+			return false;
+		}
+
+		bool operator<=(const vpgData& data) const
+		{
+			if (timestamp <= data.timestamp) return true;
+			if (timestamp > data.timestamp) return false;
+			if (vpgName <= data.vpgName) return true;
+			if (vpgName > data.vpgName) return false;
+			return false;
+		}
+
+		bool operator==(const vpgData& data) const
+		{
+			if (timestamp == data.timestamp && vpgName == data.vpgName && backupSetId == data.backupSetId) return true;
+			return false;
+		}
+
+		bool operator!=(const vpgData& data) const
+		{
+			return !(*this == data);
+		}
+
 	};
 
 	vpgData readVpgXml(const std::string& path);
 
-	void onGeneralView(std::vector<std::string>& result);
+	void readHighLevelDir(std::vector<std::string>& result);
+	void readDatesDir(std::vector<std::string>& result, const std::string& timestamp);
+
+	std::set<vpgData> readVpgMetada();
 };
 
