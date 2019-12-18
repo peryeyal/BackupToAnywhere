@@ -30,7 +30,7 @@
 #define FUSE_USE_VERSION 26
 #endif
 
-#include <Fuse.h>
+#include <fuse.h>
 #include <string.h>
 
 #include <boost/noncopyable.hpp>
