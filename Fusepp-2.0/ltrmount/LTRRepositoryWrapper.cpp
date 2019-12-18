@@ -1,4 +1,5 @@
 #include "LTRRepositoryWrapper.h"
+#include "glacier_upload_script.h"
 #include "pugixml.hpp"
 
 #include <algorithm>
@@ -22,7 +23,6 @@ namespace fs = boost::filesystem;
 			/glacier
 */
 
-static const char *ltr_str = "Hello World!\n";
 static const char *general_path = "general";
 static const char *glacier_path = "glacier";
 
@@ -31,8 +31,6 @@ static const char *glacier_fileblock1 = "00001.vmdk";
 static const char *glacier_fileblock2 = "00002.vmdk";
 static const char *glacier_fileblock3 = "00003.vmdk";
 static const char *glacier_upload_file = "glacier_upload.py";
-
-static const char *glacier_upload_file_data = "print(\"Hello!\")";
 
 namespace
 {
@@ -68,7 +66,7 @@ std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 	}
 
 	if (std::string("/") + glacier_path + "/" + glacier_upload_file == path) {
-		return std::make_tuple(FileType::RegularFile, strlen(glacier_upload_file_data));
+		return std::make_tuple(FileType::RegularFile, get_glacier_upload_script().size());
 	}
 
 
@@ -138,7 +136,7 @@ size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size
 	}
 
 	if (std::string("/") + glacier_path + "/" + glacier_upload_file == path) {
-		memcpy(buf, glacier_upload_file_data + offset, std::min(size, strlen(glacier_upload_file_data)-offset));
+		memcpy(buf, get_glacier_upload_script().c_str() + offset, std::min(size, get_glacier_upload_script().size()-offset));
 		return size;
 	}
 
