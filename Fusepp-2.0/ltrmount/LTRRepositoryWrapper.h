@@ -6,7 +6,7 @@
 #include "ISubFileSystem.h"
 
 
-class LTRRepositoryWrapper : ISubFilesystem
+class LTRRepositoryWrapper : ISubFileSystem
 {
 public:
 	static std::tuple<FileType, size_t> getattr(const char *);
@@ -22,6 +22,7 @@ private:
 	{
 		std::string timestamp;
 		std::string vpgName;
+		std::string backupSetId;
 	};
 
 	static vpgData readVpgXml(const std::string& path);
