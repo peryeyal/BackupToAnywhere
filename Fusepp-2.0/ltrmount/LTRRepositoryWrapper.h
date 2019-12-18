@@ -6,7 +6,7 @@
 #include "ISubFileSystem.h"
 
 
-class LTRRepositoryWrapper : ISubFilesystem
+class LTRRepositoryWrapper : ISubFileSystem
 {
 public:
 	static std::tuple<FileType, size_t> getattr(const char *);

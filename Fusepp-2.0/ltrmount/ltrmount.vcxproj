@@ -19,12 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GlacierSubFS.cpp" />
+    <ClCompile Include="LTRMetadataSubFS.cpp" />
     <ClCompile Include="LTRRepositoryWrapper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pugixml.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GlacierSubFS.h" />
     <ClInclude Include="ISubFileSystem.h" />
+    <ClInclude Include="LTRMetadataSubFS.h" />
     <ClInclude Include="LTRRepositoryWrapper.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
