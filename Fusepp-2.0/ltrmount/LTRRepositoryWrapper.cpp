@@ -1,5 +1,4 @@
 #include "LTRRepositoryWrapper.h"
-#include "pugixml.hpp"
 
 #include <algorithm>
 #include <iostream>
