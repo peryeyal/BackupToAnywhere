@@ -35,8 +35,8 @@ static const char *glacier_upload_script_data = "print(\"Hello!\")";
 namespace
 {
 	std::string basePath = "E:\\";
-	 
 }
+
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 

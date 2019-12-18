@@ -3,14 +3,10 @@
 #include <tuple>
 #include <string>
 #include <vector>
+#include "ISubFileSystem.h"
 
-enum FileType
-{
-	RegularFile = 0,
-	Directory = 1,
-};
 
-class LTRRepositoryWrapper
+class LTRRepositoryWrapper : ISubFilesystem
 {
 public:
 	static std::tuple<FileType, size_t> getattr(const char *);
