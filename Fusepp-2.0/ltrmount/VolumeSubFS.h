@@ -1,10 +1,12 @@
 #pragma once
 #include "ISubFileSystem.h"
+#include "GlacierSubFS.h"
+
 class VolumeSubFS :
 	public ISubFileSystem
 {
 public:
-	VolumeSubFS(std::string repository_path, std::string volume_name, size_t size_in_bytes, std::string dom_path, std::string datapool_path);
+	VolumeSubFS(bool use_simple, std::string repository_path, size_t size_in_bytes, std::string dom_path, std::string datapool_path);
 
 	std::tuple<FileType, size_t> getattr(const char *);
 	std::vector<std::string> readdir(const char *path);
@@ -12,10 +14,10 @@ public:
 	bool shouldDelegate(const char *path);
 
 private:
-	std::string repository_path;
-	std::string volume_name;
+	GlacierSubFS glacierFS;
+	LtrRandomAccessReader reader;
+
+	bool use_simple;
 	size_t size_in_bytes;
-	std::string dom_path;
-	std::string datapool_path;
 };
 

@@ -13,5 +13,8 @@ int main()
 	std::vector<char> data(size_to_read);
 	reader.read(data.data(), size_to_read, 0);
 
+	RootSubFS Wrapper(std::string("C:\\temp\\"));
+	Wrapper.readdir("\\general\\2019-12-15__01_00\\VPG - 500GB - 1 volume - StoreOnceSMBv2 03:00");
+
 	return 0;
 }

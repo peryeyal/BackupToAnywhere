@@ -5,7 +5,6 @@
 #include <vector>
 #include "ISubFileSystem.h"
 #include "LTRMetadataSubFS.h"
-#include "GlacierSubFS.h"
 
 class RootSubFS : ISubFileSystem
 {
@@ -19,7 +18,7 @@ public:
 
 private:
 	LTRMetadataSubFS generalSubFS;
-	GlacierSubFS glacierSubFS;
+	LTRMetadataSubFS glacierSubFS;
 };
 
 

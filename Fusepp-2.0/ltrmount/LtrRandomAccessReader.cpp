@@ -1,4 +1,5 @@
 #include "LtrRandomAccessReader.h"
+#include <string.h>
 
 #include <boost/filesystem.hpp>
 
