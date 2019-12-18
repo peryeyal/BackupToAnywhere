@@ -69,28 +69,31 @@ void LTRMetadataSubFS::readDatesDir(std::vector<std::string>& result, const std:
 	
 }
 
-std::set<LTRMetadataSubFS::vpgData> LTRMetadataSubFS::readVpgMetada()
+const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 {
 	auto path_str = mountPoint + "backups";
 	fs::path dirPath(path_str);
 	fs::recursive_directory_iterator it(dirPath);
 	fs::recursive_directory_iterator end_it;
-	std::set<LTRMetadataSubFS::vpgData> set_result;
+	static std::set<LTRMetadataSubFS::vpgData> set_result;
 
-	while (it != end_it)
+	if (set_result.empty())
 	{
-		if (it->path().extension() == ".vpc")
+		while (it != end_it)
 		{
-			auto outFile = readVpgXml(it->path().string());
+			if (it->path().extension() == ".vpc")
+			{
+				auto outFile = readVpgXml(it->path().string());
 
-			if (outFile.timestamp.size() > 4)
-				outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
-			outFile.timestamp.replace(13, 1, "_");
-			outFile.timestamp.replace(10, 1, "__");
-			set_result.emplace(std::move(outFile));
+				if (outFile.timestamp.size() > 4)
+					outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
+				outFile.timestamp.replace(13, 1, "_");
+				outFile.timestamp.replace(10, 1, "__");
+				set_result.emplace(std::move(outFile));
+			}
+
+			++it;
 		}
-
-		++it;
 	}
 
 	return set_result;
@@ -98,7 +101,7 @@ std::set<LTRMetadataSubFS::vpgData> LTRMetadataSubFS::readVpgMetada()
 
 void LTRMetadataSubFS::readHighLevelDir(std::vector<std::string>& result)
 {
-	auto set_result = readVpgMetada();
+	const auto& set_result = readVpgMetada();
 
 	for (auto& str : set_result)
 	{
