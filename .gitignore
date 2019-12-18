@@ -12,6 +12,7 @@ Fusepp-2.0/ltrmount/x64/
 Fusepp-2.0/ltrmount/*.user
 
 Fusepp-2.0/ltrmount/LTRMount
+LtrFacade*
 # Precompiled Headers
 *.gch
 *.pch

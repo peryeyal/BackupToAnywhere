@@ -13,7 +13,7 @@ clean:
 facade: build
 	mkdir $(LTRFACADE)	
 	$(FACADEBIN)/LTRMount $(LTRFACADE)
-	ls -al $(LTRFACADE)
+	find $(LTRFACADE)
 
 unfacade:
 	pkill LTRMount
