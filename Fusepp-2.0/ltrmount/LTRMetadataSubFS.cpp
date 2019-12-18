@@ -116,9 +116,10 @@ const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 			{
 				auto outFile = readVpgXml(it->path().string());
 					
-				if (outFile.timestamp.size() > 4)
+				if (outFile.timestamp.size() > 4) {
 					outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
-					outFile.timestamp.replace(13, 1, "_");
+				}
+				outFile.timestamp.replace(13, 1, "_");
 				outFile.timestamp.replace(10, 1, "__");
 				set_result.emplace(std::move(outFile));
 			}

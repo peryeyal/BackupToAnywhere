@@ -16,9 +16,9 @@ public:
 
 private:
 	bool simple_vmdk;
-	VolumeSubFS dummyVolumeSubFS;
 	std::string mountPoint;
 	std::string fuse_path;
+	VolumeSubFS dummyVolumeSubFS;
 
 
 	struct vpgData
