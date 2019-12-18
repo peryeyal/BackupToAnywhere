@@ -6,6 +6,10 @@
 *.lo
 *.o
 *.obj
+LTRepository/.vs/
+LTRepository/Debug/
+LTRepository/LTRepository.sln.DotSettings.user
+LTRepository/LTRepository.vcxproj.user
 
 # Precompiled Headers
 *.gch
