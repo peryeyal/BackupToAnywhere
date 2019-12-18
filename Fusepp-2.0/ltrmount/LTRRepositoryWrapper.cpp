@@ -32,8 +32,8 @@ static const char *glacier_fileblock3 = "00003.vmdk";
 namespace
 {
 	std::string basePath = "E:\\";
-	 
 }
+
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
