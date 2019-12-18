@@ -22,7 +22,7 @@
     <ClCompile Include="GlacierSubFS.cpp" />
     <ClCompile Include="glacier_upload_script.cpp" />
     <ClCompile Include="LTRMetadataSubFS.cpp" />
-    <ClCompile Include="LTRRepositoryWrapper.cpp" />
+    <ClCompile Include="RootSubFS.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pugixml.cpp" />
   </ItemGroup>
@@ -31,7 +31,7 @@
     <ClInclude Include="glacier_upload_script.h" />
     <ClInclude Include="ISubFileSystem.h" />
     <ClInclude Include="LTRMetadataSubFS.h" />
-    <ClInclude Include="LTRRepositoryWrapper.h" />
+    <ClInclude Include="RootSubFS.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
   </ItemGroup>

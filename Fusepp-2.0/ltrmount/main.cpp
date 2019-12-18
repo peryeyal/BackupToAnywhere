@@ -1,8 +1,8 @@
-#include "LTRRepositoryWrapper.h"
+#include "RootSubFS.h"
 
 int main()
 {
-	LTRRepositoryWrapper Wrapper(std::string("E:\\"));
+	RootSubFS Wrapper(std::string("E:\\"));
 	Wrapper.readdir("/");
 
 	return 0;
