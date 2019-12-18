@@ -12,7 +12,7 @@
 //static const char *ltr_path = "/ltr";
 
 
-static RootSubFS rootSubFS("/mnt/smb_qa_longrun/");
+static RootSubFS rootSubFS("/mnt/nfs_qa_longrun/");
 
 int LTRFS::getattr(const char *path, struct stat *stbuf)
 {
