@@ -38,6 +38,9 @@ std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 	if (std::string("/") == path) {
 		return std::make_tuple(FileType::Directory, file_size);
 	}
+	if (generalSubFS.shouldDelegate(path)) {
+		return generalSubFS.getattr(path);
+	}
 
 	if (std::string("/") + general_path == path) {
 		return std::make_tuple(FileType::Directory, file_size);
@@ -85,8 +88,7 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 		result.emplace_back(glacier_fileblock3);
 		result.emplace_back(glacier_upload_file);
 	}
-	else if (std::string("/") + general_path == path)
-	{
+	else if (generalSubFS.shouldDelegate(path)) {
 		return generalSubFS.readdir(path);
 	}
 
@@ -94,7 +96,9 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 }
 
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
-
+	if (generalSubFS.shouldDelegate(path)) {
+		return generalSubFS.read(path, buf, size, offset);
+	}
 	if (std::string("/") + glacier_path + "/" + glacier_fileblock1 == path) {
 		memset(buf, 1, size);
 		return size;

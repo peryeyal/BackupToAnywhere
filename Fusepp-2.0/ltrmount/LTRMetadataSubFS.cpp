@@ -16,6 +16,10 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 	return result;
 }
 
+bool LTRMetadataSubFS::shouldDelegate(const char *path) {
+	return (std::string(path).rfind("/general", 0) == 0);
+}
+
 void LTRMetadataSubFS::onGeneralView(std::vector<std::string>& result)
 {
 	fs::path dirPath(mountPoint + "backups");

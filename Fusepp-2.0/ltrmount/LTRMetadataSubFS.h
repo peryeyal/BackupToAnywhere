@@ -6,6 +6,10 @@ class LTRMetadataSubFS : public ISubFileSystem
 public:
 	LTRMetadataSubFS(std::string mountPoint);
 	std::vector<std::string> readdir(const char *path);
+	std::tuple<FileType, size_t> getattr(const char *);
+	size_t read(const char *path, char *buf, size_t size, size_t offset);
+
+	bool shouldDelegate(const char *path);
 
 private:
 	std::string mountPoint;
