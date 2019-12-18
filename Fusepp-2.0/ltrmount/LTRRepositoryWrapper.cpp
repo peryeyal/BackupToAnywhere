@@ -6,6 +6,8 @@
 #include <memory>
 #include <string.h>
 
+#include <boost/filesystem/path.hpp>
+
 /*
 	backups/
 			general_view
@@ -65,9 +67,11 @@ std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 	}
 
 	if (std::string("/") + glacier_path + "/" + glacier_upload_file == path) {
-		return std::make_tuple(FileType::RegularFile, get_glacier_upload_script().size());
-	}
+		auto file_list = readdir(boost::filesystem::path(path).parent_path().string().c_str());
+		file_list.erase(std::remove(file_list.begin(), file_list.end(), boost::filesystem::path(path).filename().string()), file_list.end());
 
+		return std::make_tuple(FileType::RegularFile, get_glacier_upload_script(file_list, glacier_fileblocksize).size());
+	}
 
 	return std::make_tuple(FileType::RegularFile, 0);
 }
@@ -117,7 +121,11 @@ size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size
 	}
 
 	if (std::string("/") + glacier_path + "/" + glacier_upload_file == path) {
-		memcpy(buf, get_glacier_upload_script().c_str() + offset, std::min(size, get_glacier_upload_script().size()-offset));
+		auto file_list = readdir(boost::filesystem::path(path).parent_path().string().c_str());
+		file_list.erase(std::remove(file_list.begin(), file_list.end(), boost::filesystem::path(path).filename().string()), file_list.end());
+
+		memcpy(buf, get_glacier_upload_script(file_list, glacier_fileblocksize).c_str() + offset,
+			std::min(size, get_glacier_upload_script(file_list, glacier_fileblocksize).size()-offset));
 		return size;
 	}
 

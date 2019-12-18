@@ -1,5 +1,25 @@
 #include "glacier_upload_script.h"
 
+std::string get_glacier_upload_script();
+
+std::string get_glacier_upload_script(const std::vector<std::string>& list, size_t chunk_size) {
+
+	std::string file_list;
+	for (const auto& item : list)
+		file_list += "\"" + item + "\",";
+
+	const auto key = std::make_tuple(file_list, chunk_size);
+	static std::map<decltype(key), std::string> cache;
+	
+	if (cache[key].empty()) {
+		cache[key] =
+			"file_list = [" + file_list + "]\n" +
+			"s3_glacier_chunk_size = " + std::to_string(chunk_size) + "\n" +
+			get_glacier_upload_script();
+	}
+
+	return cache[key];
+}
 std::string get_glacier_upload_script() {
 		return R"(
 import os
@@ -10,8 +30,6 @@ import subprocess
 import hashlib
 
 s3_glacier_vault_name = "LTR-S3-GLACIER-VAULT"
-file_list = ["./rand_files/sample1.txt", "./rand_files/sample2.txt", "./rand_files/sample3.txt", ]
-s3_glacier_chunk_size = 1048576
 
 def getChunkSHA256Hashes(fileName) :
 	f = open(fileName, 'rb')
@@ -79,5 +97,5 @@ result = subprocess.run(command, shell = True)
 if 0 != result.returncode:
 	print("[ERROR]: Failed to run: " + command)
 	os.sys.exit(-1)
-	)";
+)";
 }

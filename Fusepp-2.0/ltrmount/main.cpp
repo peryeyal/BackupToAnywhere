@@ -2,8 +2,10 @@
 
 int main()
 {
-	LTRRepositoryWrapper Wrapper(std::string("E:\\"));
-	Wrapper.readdir("/");
+	LTRRepositoryWrapper wrapper(std::string("E:\\"));
+	wrapper.readdir("/");
+	wrapper.readdir("/glacier");
+	wrapper.getattr("/glacier/glacier_upload.py");
 
 	return 0;
 }
