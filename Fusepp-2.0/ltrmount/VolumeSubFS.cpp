@@ -21,7 +21,7 @@ VolumeSubFS::VolumeSubFS(bool use_simple, std::string repository_path, std::stri
 
 
 std::tuple<FileType, size_t> VolumeSubFS::getattr(const char *path) {
-	if (boost::algorithm::ends_with(path, ".vdmk")) {
+	if (boost::algorithm::ends_with(path, ".vmdk")) {
 		if (use_simple)
 			std::make_tuple(FileType::RegularFile, size_in_bytes);
 		else 
