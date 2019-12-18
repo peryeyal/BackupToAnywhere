@@ -1,18 +1,18 @@
-// Hello filesystem class definition
+// LTR filesystem class definition
 
-#ifndef __HELLOFS_H_
-#define __HELLOFS_H_
+#ifndef __LTRFS_H_
+#define __LTRFS_H_
 
 #include "Fuse.h"
 
 #include "Fuse-impl.h"
 
-class HelloFS : public Fusepp::Fuse<HelloFS>
+class LTRFS : public Fusepp::Fuse<LTRFS>
 {
 public:
-  HelloFS() {}
+  LTRFS() {}
 
-  ~HelloFS() {}
+  ~LTRFS() {}
 
   static int getattr (const char *, struct stat *);
 

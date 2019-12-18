@@ -1,11 +1,9 @@
-// See  FUSE:  example/hello.c
-
-#include "helloFS.h"
+#include "LTRFS.h"
 
 int main(int argc, char *argv[])
 {
 
-  HelloFS fs;
+  LTRFS fs;
 
   int status = fs.run(argc, argv);
 
