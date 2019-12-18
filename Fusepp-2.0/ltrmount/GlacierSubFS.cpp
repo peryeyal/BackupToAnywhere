@@ -38,7 +38,7 @@ std::vector<std::string> GlacierSubFS::readdir(const char *path) {
 	for (int i = 0; i * glacier_fileblocksize < size_in_bytes; i++)
 	{
 		char buffer[20] = { 0 };
-		sprintf_s(buffer, "%5d.glacier", i);
+		sprintf(buffer, "%5d.glacier", i);
 		result.emplace_back(buffer);
 	}
 	return result;
@@ -47,7 +47,7 @@ std::vector<std::string> GlacierSubFS::readdir(const char *path) {
 int GlacierSubFS::extract_glacier_index(const char *path) {
 	int glacier_idx_file;
 	char buffer[255];
-	sscanf_s(path, "%s%5d.glacier", buffer, 255, &glacier_idx_file);
+	sscanf(path, "%s%5d.glacier", buffer, &glacier_idx_file);
 	return glacier_idx_file;
 }
 

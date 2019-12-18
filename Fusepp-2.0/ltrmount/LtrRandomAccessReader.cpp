@@ -1,5 +1,5 @@
 #include "LtrRandomAccessReader.h"
-#include <memory>
+#include <string.h>
 
 
 
