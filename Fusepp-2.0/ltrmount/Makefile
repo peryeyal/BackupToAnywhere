@@ -7,7 +7,7 @@ LDFLAGS = `pkg-config fuse --libs`
 
 $(shell mkdir -p $(OBJDIR)) 
 
-OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o $(OBJDIR)/LTRRepositoryWrapper.o
+OBJS = $(OBJDIR)/LTRMount.o $(OBJDIR)/LTRFS.o $(OBJDIR)/LTRRepositoryWrapper.o $(OBJDIR)/pugixml.o
 
 all: $(PROG)
 
