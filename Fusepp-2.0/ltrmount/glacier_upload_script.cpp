@@ -9,6 +9,7 @@ import glob
 import subprocess
 import hashlib
 
+s3_glacier_vault_name = "LTR-S3-GLACIER-VAULT"
 file_list = ["./rand_files/sample1.txt", "./rand_files/sample2.txt", "./rand_files/sample3.txt", ]
 s3_glacier_chunk_size = 1048576
 
@@ -45,6 +46,7 @@ def computeSHA256TreeHash() :
 		output = newOutput[:]
 	return output[0]
 
+
 print("-Start upload data  into AWS S3 Glacier Vault {0}".format(s3_glacier_vault_name))
 
 command = "aws glacier initiate-multipart-upload --account-id - --part-size {0} --vault-name {1}".format(s3_glacier_chunk_size, s3_glacier_vault_name)
@@ -77,7 +79,5 @@ result = subprocess.run(command, shell = True)
 if 0 != result.returncode:
 	print("[ERROR]: Failed to run: " + command)
 	os.sys.exit(-1)
-
-}
 	)";
 }
