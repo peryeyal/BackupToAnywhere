@@ -59,7 +59,7 @@ private:
 		}
 
 	};
-	ISubFileSystem createVolumeSubFS(const char *path);
+	VolumeSubFS createVolumeSubFS(const char *path);
 
 	vpgData readVpgXml(const std::string& path);
 

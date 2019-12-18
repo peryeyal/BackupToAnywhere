@@ -26,7 +26,7 @@ LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point
 {
 }
 
-ISubFileSystem LTRMetadataSubFS::createVolumeSubFS(const char *path) {
+VolumeSubFS LTRMetadataSubFS::createVolumeSubFS(const char *path) {
 	size_t size_in_bytes = 0;
 	VolumeSubFS singleVolume(simple_vmdk, mountPoint, "put volume name here", size_in_bytes, "put dom path in repository here", "put datapool path in repository here");
 	return singleVolume;
