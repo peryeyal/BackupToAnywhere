@@ -60,6 +60,6 @@ private:
 	void readHighLevelDir(std::vector<std::string>& result);
 	void readDatesDir(std::vector<std::string>& result, const std::string& timestamp);
 
-	std::set<vpgData> readVpgMetada();
+	const std::set<vpgData>& readVpgMetada();
 };
 
