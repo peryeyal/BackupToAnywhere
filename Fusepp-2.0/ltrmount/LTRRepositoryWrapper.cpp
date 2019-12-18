@@ -6,12 +6,25 @@
 #include <string.h>
 
 static const char *ltr_str = "Hello World!\n";
-static const char *ltr_path = "ltr";
+static const char *general_path = "general";
+static const char *glacier_path = "glacier";
+
+static const char *glacier_fileblock1 = "00001.vmdk";
+static const char *glacier_fileblock2 = "00002.vmdk";
+static const char *glacier_fileblock3 = "00003.vmdk";
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
 	size_t file_size = 0;
 	if (std::string("/") == path) {
+		return std::make_tuple(FileType::Directory, file_size);
+	}
+
+	if (std::string("/") + general_path == path) {
+		return std::make_tuple(FileType::Directory, file_size);
+	}
+
+	if (std::string("/") + glacier_path == path) {
 		return std::make_tuple(FileType::Directory, file_size);
 	}
 
@@ -21,42 +34,40 @@ std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
 std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 	std::vector<std::string> result;
-	
-	if (strcmp(path, "/") != 0)
-		return result;
 
-	result.emplace_back(".");
-	result.emplace_back("..");
-	result.emplace_back(ltr_path);
+	if (strcmp(path, "/") == 0) {
 
-	pugi::xml_document doc;
+		result.emplace_back(".");
+		result.emplace_back("..");
+		result.emplace_back(general_path);
+		result.emplace_back(glacier_path);
+	}
 
-	pugi::xml_parse_result loadResult = doc.load_file("C:\\temp\\RepoDemo\\repository.config");
-
-	std::printf(doc.child("repository").attribute("repository-type").value());
-	//std::printf(doc.desc);
-	//std::printf(doc.first_child().first_child().name.value());
-	//std::printf(doc.first_child().first_child().first_child().name.value());
-	
-	std::cout << "dsaf" << std::endl;
+	else if (std::string("/") + glacier_path == path)
+	{
+		result.emplace_back(glacier_fileblock1);
+		result.emplace_back(glacier_fileblock2);
+		result.emplace_back(glacier_fileblock3);
+	}
 
 	return result;
 }
 
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
 
-	if (strcmp(path + 1, ltr_path) != 0)
-		return -1;
+	if (std::string("/") + glacier_path + "/" + glacier_fileblock1 == path) {
+		static std::vector<char> data(0, 1);
 
-	size_t len = strlen(ltr_str);
-	if ((size_t)offset < len) {
-		if (offset + size > len)
-			size = len - offset;
-		memcpy(buf, ltr_str + offset, size);
 	}
-	else
-		size = 0;
 
-	return size;
+	if (std::string("/") + glacier_path + "/" + glacier_fileblock2 == path) {
+
+	}
+
+	if (std::string("/") + glacier_path + "/" + glacier_fileblock3 == path) {
+
+	}
+
+	return -1;
 }
 
