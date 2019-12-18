@@ -4,9 +4,9 @@
 #include <iostream>
 #include <memory>
 #include <string.h>
-#include <boost/config/user.hpp>
-#define BOOST_ALL_DYN_LINK
 #include <boost/filesystem.hpp>
+#include <set>
+
 namespace fs = boost::filesystem;
 
 /*
@@ -57,8 +57,8 @@ std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 	std::vector<std::string> result;
 
-	if (strcmp(path, "/") == 0) {
-
+	if (strcmp(path, "/") == 0) 
+	{
 		result.emplace_back(".");
 		result.emplace_back("..");
 		result.emplace_back(general_path);
@@ -71,6 +71,11 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 		result.emplace_back(glacier_fileblock2);
 		result.emplace_back(glacier_fileblock3);
 	}
+	else if (std::string("/") + general_path == path)
+	{
+		onGeneralView(result);
+	}
+
 	return result;
 }
 
@@ -87,6 +92,7 @@ LTRRepositoryWrapper::vpgData LTRRepositoryWrapper::readVpgXml(const std::string
 		auto root = doc.child("BackupSetMetadataDto");
 		data.timestamp = root.child("CheckpointTime").child_value();
 		data.vpgName = root.child("VpgName").child_value();
+		data.backupSetId = root.child("BackupSetId").first_child().child_value();
 	}
 
 	return data;
@@ -112,18 +118,29 @@ size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size
 
 void LTRRepositoryWrapper::onGeneralView(std::vector<std::string>& result)
 {
-	fs::path dirPath(basePath + "/backups");
+	fs::path dirPath(basePath + "backups");
 	fs::recursive_directory_iterator it(dirPath);
 	fs::recursive_directory_iterator end_it;
+	std::set<std::string> set_result;
 
 	while (it != end_it)
 	{
-		if (fs::is_regular_file(*it) && it->path().extension() == "vpc")
+		if (it->path().extension() == ".vpc")
 		{
 			auto outFile = readVpgXml(it->path().string());
-			result.push_back(outFile.timestamp);
+			
+			if (outFile.timestamp.size() > 4)
+				outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
+			outFile.timestamp.replace(10, 1, "__");
+			set_result.emplace(std::move(outFile.timestamp));
 		}
 
 		++it;
 	}
+
+	for (auto& str : set_result)
+	{
+		result.push_back(std::move(str));
+	}
+	std::sort(result.begin(), result.end());
 }

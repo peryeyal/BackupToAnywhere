@@ -22,6 +22,7 @@ private:
 	{
 		std::string timestamp;
 		std::string vpgName;
+		std::string backupSetId;
 	};
 
 	static vpgData readVpgXml(const std::string& path);
