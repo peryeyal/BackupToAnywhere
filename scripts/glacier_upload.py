@@ -7,19 +7,19 @@ import hashlib
 
 s3_glacier_vault_name = "LTR-S3-GLACIER-VAULT"
 
-file_list = os.listdir(sys.args[1])
+file_list = glob.glob(os.path.join(sys.argv[1], "**"))
 
 def getChunkSHA256Hashes(fileName):
     f = open(fileName, 'rb')
-    raw = f.read(os.getsize(fileName))
+    raw = f.read(os.path.getsize(fileName))
     f.close()
     return hashlib.sha256(raw).digest()
 
 def computeSHA256TreeHash():
     rawBytes = []
 
-	for file in file_list:
-		rawBytes.append(getChunkSHA256Hashes(file))
+    for file in file_list:
+        rawBytes.append(getChunkSHA256Hashes(file))
     output = rawBytes[:]
 
     while len(output) > 1:
@@ -44,7 +44,7 @@ def computeSHA256TreeHash():
 
 print("-Start upload data  into AWS S3 Glacier Vault ({0})".format(s3_glacier_vault_name))
 
-command = "aws glacier initiate-multipart-upload --account-id - --part-size {0} --vault-name {1}".format(os.getsize(file_list[0]), s3_glacier_vault_name)
+command = "aws glacier initiate-multipart-upload --account-id - --part-size {0} --vault-name {1}".format(os.path.getsize(file_list[0]), s3_glacier_vault_name)
 result = subprocess.run(command, shell=True, stdout=subprocess.PIPE)
 if 0 != result.returncode:
     print("[ERROR]: Failed to run: " + command)
@@ -59,7 +59,7 @@ for item in file_list:
 
     start_bytes = end_bytes
     end_bytes += os.path.getsize(item)
-	print("Uploading item: {0}".format(item))
+    print("Uploading item: {0}".format(item))
     command = "aws glacier upload-multipart-part --upload-id {0} --body {1} --range 'bytes {2}-{3}/*' --account-id - --vault-name {4}".format(uploadId, item, start_bytes, end_bytes-1, s3_glacier_vault_name)
     result = subprocess.run(command, shell=True)
     if 0 != result.returncode:
