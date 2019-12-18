@@ -57,14 +57,14 @@ bool LTRMetadataSubFS::shouldDelegate(const char *path) {
 void LTRMetadataSubFS::readDatesDir(std::vector<std::string>& result, const std::string& timestamp)
 {
 	auto set_result = readVpgMetada();
-
-	if (auto find_res = std::find_if(set_result.cbegin(), set_result.cend(),
+	auto it = std::find_if(set_result.begin(), set_result.end(),
 		[timestamp](vpgData data) {
 		return data.timestamp == timestamp;
-	}) != set_result.cend())
+	});
+
+	if (it != set_result.end())
 	{
-		//find_res;
-		//result.push_back(find_res.vpgName);
+		result.push_back(it->vpgName);
 	}
 	
 }
