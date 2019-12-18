@@ -7,7 +7,7 @@
 enum FileType
 {
 	RegularFile = 0,
-	Dirrectory = 1,
+	Directory = 1,
 };
 
 class LTRRepositoryWrapper

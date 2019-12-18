@@ -3,19 +3,20 @@
 
 #include <iostream>
 #include <memory>
+#include <string.h>
 
 static const char *ltr_str = "Hello World!\n";
-static const char *ltr_path = "/ltr";
+static const char *ltr_path = "ltr";
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
 	size_t file_size = 0;
 	if (std::string("/") == path) {
-		return std::make_tuple(FileType::Dirrectory, file_size);
+		return std::make_tuple(FileType::Directory, file_size);
 	}
 
 	file_size = strlen(ltr_str);
-	return std::make_tuple(FileType::Dirrectory, file_size);
+	return std::make_tuple(FileType::RegularFile, file_size);
 }
 
 std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
@@ -44,7 +45,7 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
 
-	if (strcmp(path, ltr_path) != 0)
+	if (strcmp(path + 1, ltr_path) != 0)
 		return -1;
 
 	size_t len = strlen(ltr_str);
