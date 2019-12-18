@@ -4,30 +4,22 @@
 #include <string>
 #include <vector>
 #include "ISubFileSystem.h"
-
+#include "LTRMetadataSubFS.h"
+#include "GlacierSubFS.h"
 
 class LTRRepositoryWrapper : ISubFileSystem
 {
 public:
-	static std::tuple<FileType, size_t> getattr(const char *);
+	LTRRepositoryWrapper(std::string mount);
+	std::tuple<FileType, size_t> getattr(const char *);
 
-	static std::vector<std::string> readdir(const char *path);
+	std::vector<std::string> readdir(const char *path);
 
-	static size_t read(const char *path, char *buf, size_t size, size_t offset);
+	size_t read(const char *path, char *buf, size_t size, size_t offset);
 
 private:
-	
-	
-	struct vpgData
-	{
-		std::string timestamp;
-		std::string vpgName;
-		std::string backupSetId;
-	};
-
-	static vpgData readVpgXml(const std::string& path);
-
-	static void onGeneralView(std::vector<std::string>& result);
+	LTRMetadataSubFS generalSubFS;
+	GlacierSubFS glacierSubFS;
 };
 
 

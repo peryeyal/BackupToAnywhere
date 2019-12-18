@@ -1,15 +1,10 @@
 #include "LTRRepositoryWrapper.h"
 #include "glacier_upload_script.h"
 #include "pugixml.hpp"
-
 #include <algorithm>
 #include <iostream>
 #include <memory>
 #include <string.h>
-#include <boost/filesystem.hpp>
-#include <set>
-
-namespace fs = boost::filesystem;
 
 /*
 	backups/
@@ -37,12 +32,16 @@ namespace
 	std::string basePath = "E:\\";
 }
 
+LTRRepositoryWrapper::LTRRepositoryWrapper(std::string mount) : generalSubFS(mount) {}
 
 std::tuple<FileType, size_t> LTRRepositoryWrapper::getattr(const char *path) {
 
 	size_t file_size = 0;
 	if (std::string("/") == path) {
 		return std::make_tuple(FileType::Directory, file_size);
+	}
+	if (generalSubFS.shouldDelegate(path)) {
+		return generalSubFS.getattr(path);
 	}
 
 	if (std::string("/") + general_path == path) {
@@ -91,35 +90,17 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 		result.emplace_back(glacier_fileblock3);
 		result.emplace_back(glacier_upload_file);
 	}
-	else if (std::string("/") + general_path == path)
-	{
-		onGeneralView(result);
+	else if (generalSubFS.shouldDelegate(path)) {
+		return generalSubFS.readdir(path);
 	}
 
 	return result;
 }
 
-LTRRepositoryWrapper::vpgData LTRRepositoryWrapper::readVpgXml(const std::string& path)
-{
-	pugi::xml_document doc;
-
-	pugi::xml_parse_result loadResult = doc.load_file(path.c_str());
-
-	vpgData data;
-
-	if (loadResult)
-	{
-		auto root = doc.child("BackupSetMetadataDto");
-		data.timestamp = root.child("CheckpointTime").child_value();
-		data.vpgName = root.child("VpgName").child_value();
-		data.backupSetId = root.child("BackupSetId").first_child().child_value();
-	}
-
-	return data;
-}
-
 size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size_t offset) {
-
+	if (generalSubFS.shouldDelegate(path)) {
+		return generalSubFS.read(path, buf, size, offset);
+	}
 	if (std::string("/") + glacier_path + "/" + glacier_fileblock1 == path) {
 		memset(buf, 1, size);
 		return size;
@@ -141,33 +122,4 @@ size_t LTRRepositoryWrapper::read(const char *path, char *buf, size_t size, size
 	}
 
 	return -1;
-}
-
-void LTRRepositoryWrapper::onGeneralView(std::vector<std::string>& result)
-{
-	fs::path dirPath(basePath + "backups");
-	fs::recursive_directory_iterator it(dirPath);
-	fs::recursive_directory_iterator end_it;
-	std::set<std::string> set_result;
-
-	while (it != end_it)
-	{
-		if (it->path().extension() == ".vpc")
-		{
-			auto outFile = readVpgXml(it->path().string());
-			
-			if (outFile.timestamp.size() > 4)
-				outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
-			outFile.timestamp.replace(10, 1, "__");
-			set_result.emplace(std::move(outFile.timestamp));
-		}
-
-		++it;
-	}
-
-	for (auto& str : set_result)
-	{
-		result.push_back(std::move(str));
-	}
-	std::sort(result.begin(), result.end());
 }

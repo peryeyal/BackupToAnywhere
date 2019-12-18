@@ -11,9 +11,12 @@
 
 //static const char *ltr_path = "/ltr";
 
+
+static LTRRepositoryWrapper rootSubFS("/mnt/smb_qa_longrun/");
+
 int LTRFS::getattr(const char *path, struct stat *stbuf)
 {
-        std::tuple<FileType, size_t> res = LTRRepositoryWrapper::getattr(path);
+        std::tuple<FileType, size_t> res = rootSubFS.getattr(path);
         memset(stbuf, 0, sizeof(struct stat));
         if (std::get<0>(res) == FileType::Directory) {
                 stbuf->st_mode = S_IFDIR | 0755;
@@ -31,7 +34,7 @@ int LTRFS::getattr(const char *path, struct stat *stbuf)
 int LTRFS::readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			               off_t, struct fuse_file_info *)
 {
-	std::vector<std::string> dirlist = LTRRepositoryWrapper::readdir(path);
+	std::vector<std::string> dirlist = rootSubFS.readdir(path);
 	for(const auto& item : dirlist) {
 		filler(buf, item.c_str(), NULL, 0);
 	}
@@ -58,5 +61,5 @@ int LTRFS::open(const char *path, struct fuse_file_info *fi)
 int LTRFS::read(const char *path, char *buf, size_t size, off_t offset,
 		              struct fuse_file_info *fi)
 {
-	return LTRRepositoryWrapper::read(path, buf, size, offset);
+	return rootSubFS.read(path, buf, size, offset);
 }
