@@ -4,66 +4,62 @@
 #include <string.h>
 #include <boost/filesystem/path.hpp>
 
-static const size_t glacier_fileblocksize = 1048576;
-static const char *glacier_fileblock1 = "00001.vmdk";
-static const char *glacier_fileblock2 = "00002.vmdk";
-static const char *glacier_fileblock3 = "00003.vmdk";
+static const size_t glacier_fileblocksize = 1024 * 1024 * 1024; //1GB files
 
 
-GlacierSubFS::GlacierSubFS(std::string fuse_path) : fuse_path(fuse_path) {}
+GlacierSubFS::GlacierSubFS(std::string repository_path, size_t size_in_bytes, std::string dom_path, std::string datapool_path) : 
+	reader(repository_path, dom_path, datapool_path),
+	size_in_bytes(size_in_bytes)
+{
+}
 
 std::tuple<FileType, size_t> GlacierSubFS::getattr(const char *path) {
 	size_t file_size = 0;
 
-	if (std::string("/") + fuse_path == path) {
-		return std::make_tuple(FileType::Directory, file_size);
+	if (!shouldDelegate(path)) {
+		return std::make_tuple(FileType::RegularFile, 0);
 	}
 
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock1 == path) {
-		return std::make_tuple(FileType::RegularFile, glacier_fileblocksize);
+	int glacier_idx_file = extract_glacier_index(path);
+	
+	if ((glacier_idx_file+1) * glacier_fileblocksize > size_in_bytes) {
+		file_size = size_in_bytes / glacier_fileblocksize;
+	}
+	else {
+		file_size = glacier_fileblocksize;
 	}
 
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock2 == path) {
-		return std::make_tuple(FileType::RegularFile, glacier_fileblocksize);
-	}
-
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock3 == path) {
-		return std::make_tuple(FileType::RegularFile, glacier_fileblocksize);
-	}
-
-	return std::make_tuple(FileType::RegularFile, 0);
+	return std::make_tuple(FileType::RegularFile, file_size);
 
 }
 
 std::vector<std::string> GlacierSubFS::readdir(const char *path) {
 	std::vector<std::string> result;
-
-	result.emplace_back(glacier_fileblock1);
-	result.emplace_back(glacier_fileblock2);
-	result.emplace_back(glacier_fileblock3);
-
+	for (int i = 0; i * glacier_fileblocksize < size_in_bytes; i++)
+	{
+		char buffer[20] = { 0 };
+		sprintf_s(buffer, "%5d.glacier", i);
+		result.emplace_back(buffer);
+	}
 	return result;
 }
 
+int GlacierSubFS::extract_glacier_index(const char *path) {
+	int glacier_idx_file;
+	char buffer[255];
+	sscanf_s(path, "%s%5d.glacier", buffer, 255, &glacier_idx_file);
+	return glacier_idx_file;
+}
+
 size_t GlacierSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock1 == path) {
-		memset(buf, 1, size);
-		return size;
+	if (!shouldDelegate(path)) {
+		return 0;
 	}
 
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock2 == path) {
-		memset(buf, 2, size);
-		return size;
-	}
-
-	if (std::string("/") + fuse_path + "/" + glacier_fileblock3 == path) {
-		memset(buf, 3, size);
-		return size;
-	}
-
-	return 0;
+	size_t glacier_idx_file = extract_glacier_index(path);
+	return reader.read(buf, size, glacier_idx_file * glacier_fileblocksize + offset);
 }
 
 bool GlacierSubFS::shouldDelegate(const char *path) {
-	return (std::string(path).rfind("/" + fuse_path, 0) == 0);
+	return (std::string(path).find(".glacier") != std::string::npos);
 }
