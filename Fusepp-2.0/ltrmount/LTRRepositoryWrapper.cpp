@@ -1,5 +1,7 @@
 #include "LTRRepositoryWrapper.h"
+#include "pugixml.hpp"
 
+#include <iostream>
 #include <memory>
 #include <string.h>
 
@@ -26,6 +28,17 @@ std::vector<std::string> LTRRepositoryWrapper::readdir(const char *path) {
 	result.emplace_back(".");
 	result.emplace_back("..");
 	result.emplace_back(ltr_path);
+
+	pugi::xml_document doc;
+
+	pugi::xml_parse_result loadResult = doc.load_file("C:\\temp\\RepoDemo\\repository.config");
+
+	std::printf(doc.child("repository").attribute("repository-type").value());
+	//std::printf(doc.desc);
+	//std::printf(doc.first_child().first_child().name.value());
+	//std::printf(doc.first_child().first_child().first_child().name.value());
+	
+	std::cout << "dsaf" << std::endl;
 
 	return result;
 }

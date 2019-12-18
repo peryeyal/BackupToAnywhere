@@ -3,5 +3,7 @@
 int main()
 {
 	LTRRepositoryWrapper Wrapper;
+	Wrapper.readdir("/");
+
 	return 0;
 }
