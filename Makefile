@@ -1,8 +1,8 @@
-REPODIR=/mnt/nfs_qa_longrun
+REPODIR=/mnt/smb_qa_longrun
 
 mount:
 	mkdir $(REPODIR)
-	mount -t nfs 10.20.16.31:/nas/SO-NFS $(REPODIR) -o ro
+	mount -t cifs //10.20.16.31/Share_2/ltr-longrun $(REPODIR) -o ro,username=SMBadmin,password=zertodata
 	
 unmount:
 	umount $(REPODIR)
