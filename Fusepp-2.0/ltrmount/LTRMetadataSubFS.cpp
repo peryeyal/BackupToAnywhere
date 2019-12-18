@@ -11,6 +11,13 @@ LTRMetadataSubFS::LTRMetadataSubFS(std::string mountPoint) : mountPoint(mountPoi
 {
 }
 
+std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
+
+	size_t file_size = 0;
+	return std::make_tuple(FileType::Directory, file_size);
+}
+
+
 std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 	std::vector<std::string> result;
 	onGeneralView(result);
