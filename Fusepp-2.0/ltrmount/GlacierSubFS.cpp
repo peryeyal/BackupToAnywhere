@@ -23,7 +23,7 @@ std::tuple<FileType, size_t> GlacierSubFS::getattr(const char *path) {
 	int glacier_idx_file = extract_glacier_index(path);
 	
 	if ((glacier_idx_file+1) * glacier_fileblocksize > size_in_bytes) {
-		file_size = size_in_bytes / glacier_fileblocksize;
+		file_size = size_in_bytes % glacier_fileblocksize;
 	}
 	else {
 		file_size = glacier_fileblocksize;
@@ -47,7 +47,7 @@ std::vector<std::string> GlacierSubFS::readdir(const char *path) {
 int GlacierSubFS::extract_glacier_index(const char *path) {
 	int glacier_idx_file;
 	char buffer[255];
-	sscanf(path, "%s%5d.glacier", buffer, &glacier_idx_file);
+	sscanf(path, "%s/%05d.glacier", buffer, &glacier_idx_file);
 	return glacier_idx_file;
 }
 
