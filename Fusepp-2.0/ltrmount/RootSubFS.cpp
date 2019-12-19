@@ -8,7 +8,7 @@ static const char *glacier_path = "glacier";
 RootSubFS::RootSubFS(std::string mount) : generalSubFS(false, mount, general_path), glacierSubFS(true, mount, glacier_path) {}
 
 std::tuple<FileType, size_t> RootSubFS::getattr(const char *path) {
-
+	printf("getattr(%s)\n",path);
 	size_t file_size = 0;
 	if ((std::string("/") == path) || std::string(".") == path || std::string("..") == path){
 		return std::make_tuple(FileType::Directory, file_size);
@@ -24,6 +24,7 @@ std::tuple<FileType, size_t> RootSubFS::getattr(const char *path) {
 }
 
 std::vector<std::string> RootSubFS::readdir(const char *path) {
+	printf("readdir(%s)\n",path);
 	std::vector<std::string> result;
 
 	if (strcmp(path, SEPARATOR) == 0)
@@ -44,6 +45,7 @@ std::vector<std::string> RootSubFS::readdir(const char *path) {
 }
 
 size_t RootSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
+	printf("read(%s,__,%d,%d)\n",path,size, offset);
 
 	if (generalSubFS.shouldDelegate(path)) {
 		return generalSubFS.read(path, buf, size, offset);

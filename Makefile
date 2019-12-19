@@ -1,6 +1,6 @@
 SMBREPODIR=/mnt/smb_qa_longrun
 NFSREPODIR=/mnt/nfs_qa_longrun
-LTRFACADE=LtrFacade2
+LTRFACADE=LtrFacade4
 FACADEBIN=Fusepp-2.0/ltrmount
 
 
@@ -12,8 +12,8 @@ clean:
 
 facade: build
 	mkdir $(LTRFACADE)	
-	$(FACADEBIN)/LTRMount $(LTRFACADE)
-	find $(LTRFACADE)
+	$(FACADEBIN)/LTRMount -f $(LTRFACADE)
+	#ind $(LTRFACADE)
 
 unfacade:
 	pkill LTRMount
