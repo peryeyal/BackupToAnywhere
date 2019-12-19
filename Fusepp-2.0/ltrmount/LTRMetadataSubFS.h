@@ -1,8 +1,9 @@
 #pragma once
 #include "ISubFileSystem.h"
-#include <set>
 #include "VolumeSubFS.h"
+#include <set>
 #include <list>
+#include <map>
 
 class LTRMetadataSubFS : public ISubFileSystem
 {
@@ -20,13 +21,22 @@ private:
 	std::string fuse_path;
 	VolumeSubFS dummyVolumeSubFS;
 
+	struct volumeEntry
+	{
+		std::string volumeName;
+		std::size_t volumeSize;
+		std::string dataPoolPath;
+		std::string domPath;
+		
+	};
+
 
 	struct vpgData
 	{
 		std::string timestamp;
 		std::string vpgName;
 		std::string backupSetId;
-		std::list<std::string> vmNames;
+		std::map<std::string, std::list<volumeEntry>> vmList;
 
 		bool operator<(const vpgData& data) const
 		{
@@ -62,11 +72,13 @@ private:
 	VolumeSubFS createVolumeSubFS(const char *path);
 
 	vpgData readVpgXml(const std::string& path);
+	std::string readImageXml(const std::string& path, const std::string& mirrorId, const std::string& domFileId);
+	volumeEntry readVolumeXml(const std::string& path, const std::string& volumePathId, const std::string& unitNumber);
 
 	void readHighLevelDir(std::vector<std::string>& result);
 	void readDatesDir(std::vector<std::string>& result, const std::string& timestamp);
 	void readVpgDir(std::vector<std::string>& result, const std::string& vpgName);
-
+	volumeEntry findVM(const std::string& path);
 	const std::set<vpgData>& readVpgMetada();
 };
 

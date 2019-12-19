@@ -10,6 +10,8 @@
 #define SEPARATOR "/"
 #endif
 
+#define SEPARATOR_STR std::string(SEPARATOR)
+
 enum FileType
 {
 	RegularFile = 0,
