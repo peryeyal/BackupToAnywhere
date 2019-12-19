@@ -28,20 +28,20 @@ std::vector<std::string> RootSubFS::readdir(const char *path) {
 
 	if (strcmp(path, SEPARATOR) == 0)
 	{
-		result.emplace_back(".");
-		result.emplace_back("..");
 		result.emplace_back(general_path);
 		result.emplace_back(glacier_path);
 	}
 
 	if (glacierSubFS.shouldDelegate(path)) {
-		return glacierSubFS.readdir(path);
+		result = glacierSubFS.readdir(path);
 	}
 
 	if (generalSubFS.shouldDelegate(path)) {
-		return generalSubFS.readdir(path);
+		result = generalSubFS.readdir(path);
 	}
 
+	result.emplace_back(".");
+	result.emplace_back("..");
 	return result;
 }
 
