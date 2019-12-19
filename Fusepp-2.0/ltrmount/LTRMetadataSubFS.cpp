@@ -22,13 +22,13 @@
 namespace fs = boost::filesystem;
 
 LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point, std::string fuse_path) : 
-	simple_vmdk(use_simple_vmdk), mountPoint(mount_point), fuse_path(fuse_path), dummyVolumeSubFS(use_simple_vmdk, mount_point, "dummy volume", 0, "dummy dom", "dummy datapool")
+	simple_vmdk(use_simple_vmdk), mountPoint(mount_point), fuse_path(fuse_path), dummyVolumeSubFS(use_simple_vmdk, mount_point, 0, "dummy dom", "dummy datapool")
 {
 }
 
 VolumeSubFS LTRMetadataSubFS::createVolumeSubFS(const char *path) {
 	auto volumeEntry = findVM(path);
-	VolumeSubFS singleVolume(simple_vmdk, mountPoint, volumeEntry.volumeName, volumeEntry.volumeSize, volumeEntry.domPath, volumeEntry.dataPoolPath);
+	VolumeSubFS singleVolume(simple_vmdk, mountPoint, volumeEntry.volumeSize, volumeEntry.domPath, volumeEntry.dataPoolPath);
 	return singleVolume;
 }
 

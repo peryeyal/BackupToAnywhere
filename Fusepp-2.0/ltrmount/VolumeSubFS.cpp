@@ -3,43 +3,46 @@
 #include <boost/algorithm/string/predicate.hpp> 
 #include "GlacierSubFS.h"
 
-VolumeSubFS::VolumeSubFS(bool use_simple, std::string repository_path, std::string volume_name, size_t size_in_bytes, std::string dom_path, std::string datapool_path) :
+VolumeSubFS::VolumeSubFS(bool use_simple, std::string repository_path, size_t size_in_bytes, std::string dom_path, std::string datapool_path) :
+	glacierFS(repository_path, size_in_bytes, dom_path, datapool_path),
+	reader(repository_path, dom_path, datapool_path),
 	use_simple(use_simple),
-	repository_path(repository_path),
-	volume_name(volume_name),
-	size_in_bytes(size_in_bytes), 
-	dom_path(dom_path), 
-	datapool_path(datapool_path)
+	size_in_bytes(size_in_bytes)
 {
 }
 
-//ISubFileSystem VolumeSubFS::createGlacierSubFS(const char *path) {
-	//size_t size_in_bytes = 0;
-	//GlacierSubFS glacier;
-	//return singleVolume;
-//}
-
 
 std::tuple<FileType, size_t> VolumeSubFS::getattr(const char *path) {
-	if (boost::algorithm::ends_with(path, ".vmdk")) {
-		if (use_simple)
-			std::make_tuple(FileType::RegularFile, size_in_bytes);
-		else 
-			std::make_tuple(FileType::Directory, 0);
+	if (glacierFS.shouldDelegate(path)) {
+		return glacierFS.getattr(path);
 	}
-	// delegate to Glacier as a folder
+
+	if (boost::algorithm::ends_with(path, ".vmdk") && !use_simple) {
+		return std::make_tuple(FileType::Directory, 0);
+	}
+
 	return std::make_tuple(FileType::RegularFile, size_in_bytes);
 }
 
 std::vector<std::string> VolumeSubFS::readdir(const char *path) {
-	// in case of readdir, should delegate to 
+	if (boost::algorithm::ends_with(path, ".vmdk") && !use_simple) {
+		return glacierFS.readdir(path);
+	}
+	
 	std::vector<std::string> result;
 	return result;
 }
 
 size_t VolumeSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
-	LtrRandomAccessReader reader(repository_path, dom_path, datapool_path);
-	return reader.read(buf, size, offset);
+	if (glacierFS.shouldDelegate(path)) {
+		return glacierFS.read(path, buf, size, offset);
+	}
+
+	if (use_simple) {
+		return reader.read(buf, size, offset);
+	}
+
+	return 0;
 }
 
 bool VolumeSubFS::shouldDelegate(const char *path) {
