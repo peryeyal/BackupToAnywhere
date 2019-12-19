@@ -60,7 +60,7 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 	std::vector<std::string> substrRes;
 
 	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
-	
+
 	if (substrRes.size() == 2) //[general|glacier]
 		readHighLevelDir(result);
 	else if (substrRes.size() == 3) //[general|glacier]/<time>
@@ -134,8 +134,8 @@ const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 				if (outFile.timestamp.size() > 4) {
 					outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
 				}
-			//	outFile.timestamp.replace(13, 1, "_");
-			//				outFile.timestamp.replace(10, 1, "__");
+				outFile.timestamp.replace(13, 1, "_");
+				outFile.timestamp.replace(10, 1, "__");
 				set_result.emplace(std::move(outFile));
 			}
 	}
@@ -145,6 +145,8 @@ const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 
 void LTRMetadataSubFS::readHighLevelDir(std::vector<std::string>& result)
 {
+	printf("LTRMetadataSubFS::readHighLevelDir()\n");
+
 	const auto& set_result = readVpgMetada();
 
 	for (auto& str : set_result)
@@ -156,6 +158,7 @@ void LTRMetadataSubFS::readHighLevelDir(std::vector<std::string>& result)
 
 LTRMetadataSubFS::volumeEntry LTRMetadataSubFS::readVolumeXml(const std::string& path, const std::string& volumePathId, const std::string& unitNumber)
 {
+	printf("LTRMetadataSubFS::readVolumeXml(%s,%s,%s)\n", path.c_str(), volumePathId.c_str(), unitNumber.c_str());
 	pugi::xml_document doc;
 	pugi::xml_parse_result loadResult = doc.load_file((path + SEPARATOR + "gp_" + volumePathId + ".dat").c_str());
 
@@ -191,6 +194,7 @@ LTRMetadataSubFS::volumeEntry LTRMetadataSubFS::readVolumeXml(const std::string&
 
 std::string LTRMetadataSubFS::readImageXml(const std::string& path, const std::string& mirrorId, const std::string& domFileId)
 {
+	printf("LTRMetadataSubFS::readImageXml(%s,%s,%s)\n", path.c_str(), mirrorId.c_str(), domFileId.c_str());
 	fs::path mirrorDirPath = path + SEPARATOR + ".." + SEPARATOR + ".." + SEPARATOR + "images" + SEPARATOR + mirrorId;
 
 	for (fs::directory_iterator file_it = fs::directory_iterator(mirrorDirPath); file_it != fs::directory_iterator(); ++file_it)
@@ -212,6 +216,7 @@ std::string LTRMetadataSubFS::readImageXml(const std::string& path, const std::s
 
 LTRMetadataSubFS::vpgData LTRMetadataSubFS::readVpgXml(const std::string& path)
 {
+	printf("LTRMetadataSubFS::readVpgXml(%s)\n", path.c_str());
 	vpgData data;
 	fs::path vpgDir = path;
 	for (fs::directory_iterator file_it = fs::directory_iterator(vpgDir); file_it != fs::directory_iterator(); ++file_it)
@@ -257,6 +262,7 @@ LTRMetadataSubFS::vpgData LTRMetadataSubFS::readVpgXml(const std::string& path)
 
 std::list<LTRMetadataSubFS::volumeEntry> LTRMetadataSubFS::findVM(const std::string& path)
 {
+	printf("LTRMetadataSubFS::findVm(%s)\n", path.c_str());
 	std::vector<std::string> substrRes;
 	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
 	const auto& metadata = readVpgMetada();

@@ -5,7 +5,7 @@
 static const char *general_path = "general";
 static const char *glacier_path = "glacier";
 
-RootSubFS::RootSubFS(std::string mount) : generalSubFS(false, mount, general_path), glacierSubFS(true, mount, glacier_path) {}
+RootSubFS::RootSubFS(std::string mount) : generalSubFS(true, mount, general_path), glacierSubFS(false, mount, glacier_path) {}
 
 std::tuple<FileType, size_t> RootSubFS::getattr(const char *path) {
 	printf("RootSubFS::getattr(%s)\n",path);
