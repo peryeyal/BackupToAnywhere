@@ -78,7 +78,10 @@ private:
 	void readHighLevelDir(std::vector<std::string>& result);
 	void readDatesDir(std::vector<std::string>& result, const std::string& timestamp);
 	void readVpgDir(std::vector<std::string>& result, const std::string& vpgName);
-	volumeEntry findVM(const std::string& path);
+	void readVmDir(std::vector<std::string>& result, const char *path);
+
+	std::list<LTRMetadataSubFS::volumeEntry> findVM(const std::string& path);
+	volumeEntry findVolume(const std::string& path);
 	const std::set<vpgData>& readVpgMetada();
 };
 

@@ -27,7 +27,7 @@ LTRMetadataSubFS::LTRMetadataSubFS(bool use_simple_vmdk, std::string mount_point
 }
 
 VolumeSubFS LTRMetadataSubFS::createVolumeSubFS(const char *path) {
-	auto volumeEntry = findVM(path);
+	auto volumeEntry = findVolume(path);
 	VolumeSubFS singleVolume(simple_vmdk, mountPoint, volumeEntry.volumeSize, volumeEntry.domPath, volumeEntry.dataPoolPath);
 	return singleVolume;
 }
@@ -64,6 +64,8 @@ std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
 		readDatesDir(result, substrRes[2]);
 	else if (substrRes.size() == 4)
 		readVpgDir(result, substrRes[3]);
+	else if (substrRes.size() == 5)
+		readVmDir(result, path);
 
 	return result;
 }
@@ -84,6 +86,16 @@ void LTRMetadataSubFS::readDatesDir(std::vector<std::string>& result, const std:
 	{
 		result.push_back(it->vpgName);
 	}
+}
+
+void LTRMetadataSubFS::readVmDir(std::vector<std::string>& result, const char *path) {
+	auto volumeList = findVM(path);
+
+	for (const auto& volume : volumeList)
+	{
+		result.push_back(volume.volumeName);
+	}
+
 }
 
 void LTRMetadataSubFS::readVpgDir(std::vector<std::string>& result, const std::string& vpgName)
@@ -240,7 +252,7 @@ LTRMetadataSubFS::vpgData LTRMetadataSubFS::readVpgXml(const std::string& path)
 	return data;
 }
 
-LTRMetadataSubFS::volumeEntry LTRMetadataSubFS::findVM(const std::string& path)
+std::list<LTRMetadataSubFS::volumeEntry> LTRMetadataSubFS::findVM(const std::string& path)
 {
 	std::vector<std::string> substrRes;
 	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
@@ -251,14 +263,23 @@ LTRMetadataSubFS::volumeEntry LTRMetadataSubFS::findVM(const std::string& path)
 
 	if (vpgIt != metadata.end())
 	{
-		auto lst = vpgIt->vmList.at(substrRes[4]);
-		for (const auto& volume: lst)
+		return vpgIt->vmList.at(substrRes[4]);
+	}
+	return {};
+}
+
+LTRMetadataSubFS::volumeEntry LTRMetadataSubFS::findVolume(const std::string& path) {
+	std::vector<std::string> substrRes;
+	boost::split(substrRes, path, boost::is_any_of(SEPARATOR));
+
+	auto volumeList = findVM(path);
+	for (const auto& volume : volumeList)
+	{
+		if (volume.volumeName == substrRes[5])
 		{
-			if (volume.volumeName == substrRes[5])
-			{
-				return volume;
-			}
+			return volume;
 		}
 	}
-	return volumeEntry{};
+
+
 }
