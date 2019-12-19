@@ -10,8 +10,7 @@ RootSubFS::RootSubFS(std::string mount) : generalSubFS(false, mount, general_pat
 std::tuple<FileType, size_t> RootSubFS::getattr(const char *path) {
 
 	size_t file_size = 0;
-	printf("getattrib(%s)", path);
-	if (std::string("/") == path) {
+	if ((std::string("/") == path) || std::string(".") == path || std::string("..") == path){
 		return std::make_tuple(FileType::Directory, file_size);
 	}
 	if (generalSubFS.shouldDelegate(path)) {
@@ -41,8 +40,6 @@ std::vector<std::string> RootSubFS::readdir(const char *path) {
 		result = generalSubFS.readdir(path);
 	}
 
-	result.emplace_back(".");
-	result.emplace_back("..");
 	return result;
 }
 
