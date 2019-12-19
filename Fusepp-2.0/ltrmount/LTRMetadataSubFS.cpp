@@ -33,6 +33,7 @@ VolumeSubFS LTRMetadataSubFS::createVolumeSubFS(const char *path) {
 }
 
 std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
+	printf("LTRMetadataSubFS::getattr(%s)\n", path);
 
 	size_t file_size = 0;
 	if (dummyVolumeSubFS.shouldDelegate(path)) {
@@ -42,6 +43,7 @@ std::tuple<FileType, size_t> LTRMetadataSubFS::getattr(const char *path) {
 }
 
 size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t offset) {
+	printf("LTRMetadataSubFS::read(%s,__,%d,%d)\n", path, size, offset);
 	if (dummyVolumeSubFS.shouldDelegate(path)) {
 		return createVolumeSubFS(path).read(path, buf, size, offset);
 	}
@@ -49,6 +51,7 @@ size_t LTRMetadataSubFS::read(const char *path, char *buf, size_t size, size_t o
 }
 
 std::vector<std::string> LTRMetadataSubFS::readdir(const char *path) {
+	printf("LTRMetadataSubFS::readdir(%s)\n", path);
 	if (dummyVolumeSubFS.shouldDelegate(path)) {
 		return createVolumeSubFS(path).readdir(path);
 	}
@@ -131,8 +134,8 @@ const std::set<LTRMetadataSubFS::vpgData>& LTRMetadataSubFS::readVpgMetada()
 				if (outFile.timestamp.size() > 4) {
 					outFile.timestamp = outFile.timestamp.substr(0, outFile.timestamp.size() - 4);
 				}
-				outFile.timestamp.replace(13, 1, "_");
-				outFile.timestamp.replace(10, 1, "__");
+			//	outFile.timestamp.replace(13, 1, "_");
+			//				outFile.timestamp.replace(10, 1, "__");
 				set_result.emplace(std::move(outFile));
 			}
 	}
